@@ -59,6 +59,21 @@ const initializeChat = async () => {
   return chat;
 };
 
+/**
+ *  Restart Chat
+ */
+app.get('/restartChatAI', async (req, res) => {
+  const characterId = "8omt0S5AMyNSyFPX0AviFvLr0KZhgDp0ZtiAPgSH-iU"; //IRyS
+  chat = await characterAI.createOrContinueChat(characterId);
+
+  if(chat == null){
+    res.send('false');      
+  }else{
+    res.send('true');  
+  }
+   
+});
+
 
 /*
 * Handle POST request to chat to AI

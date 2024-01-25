@@ -7,13 +7,15 @@ let startBtn = document.querySelector('#start');
 let cancelBtn = document.querySelector('#cancel');
 let sendAudioBtn = document.querySelector('#sendAudioBtn');
 
+let restartBtn = document.querySelector('#restartBtn');
+
 sendTextBtn.disabled = true;
 /**
  * Intialized the chat functionality
  */
 const initialization = async () => {
   try{
-    let initResult = await axios.get('http://localhost:3000/chatAI'); 
+    let initResult = await axios.get('./chatAI'); 
     console.log(initResult);
     console.log(typeof(initResult.data));
     console.log(initResult.data == false);
@@ -45,7 +47,7 @@ const sendMessage = async (input) => {
     };
 
     // Send POST request using Axios
-    const response = await axios.post('http://localhost:3000/chatAI', requestContent);
+    const response = await axios.post('./chatAI', requestContent);
     
     // Log the server response
     console.log(response);
@@ -189,6 +191,28 @@ const textToSpeech = async(inputText) =>{
     console.error(err);
   }  
 }
-
 // Test
 //textToSpeech('HiRis, Its Irys!  Good morning. I am going to play a game today. Are you guys ready?');
+
+
+/**
+ * Restart after Session ends
+ */
+restartBtn.addEventListener('click', async () => {
+  try{
+    let initResult = await axios.get('./restartChatAI'); 
+    console.log(initResult);
+    console.log(typeof(initResult.data));
+    console.log(initResult.data == false);
+    if(initResult.data  == false){
+      alert('initialized still in progress');
+    }else{
+      alert('chat initialized');
+      sendTextBtn.disabled = false;  
+    }
+    
+  }
+  catch (err) {
+    console.error(err);
+  }  
+});
