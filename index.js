@@ -44,6 +44,8 @@ const CharacterAI = require("node_characterai");
 const characterAI = new CharacterAI();
 let chat = null;
 
+//characterAI.requester.puppeteerPath = '/Users/apple/.cache/puppeteer/chrome/mac-1108766/chrome-mac/Chromium.app';
+//console.log(characterAI.requester.puppeteerPath);
 const initializeChat = async () => {
   // Authenticating as a guest (use `.authenticateWithToken()` to use an account)
   await characterAI.authenticateAsGuest(); // Guest Login
