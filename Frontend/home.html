@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="AI Companion">
+  <meta name="author" content="Jiecheng Chen">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AICompanion</title>
+  <link href="./Frontend/main.css" rel="stylesheet">
+  <script defer src="./node_modules/axios/dist/axios.min.js"></script>
+  <script defer src="./Frontend/main.js"></script>
+</head>
+<body>
+  <h1>AI Companion</h1>
+  <h3>Text Input</h3>
+  <input id="textInput" type="text">
+  <button id="sendTextBtn">send</button>
+  <hr>
+
+  <h3>Audio Input</h3>
+  <button id="start">start</button><br>
+  <button id="cancel">cancel</button><button id="sendAudioBtn">send</button> <br>
+  <hr>
+
+
+  <br>
+  <output>nothing</output>
+  <br>
+
+  <audio controls id="audioPlayer" autoplay="true"></audio>
+</body>
+</html>

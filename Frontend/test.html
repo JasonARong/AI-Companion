@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="description" content="AI Companion">
+  <meta name="author" content="Jiecheng Chen">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test</title>
+  
+</head>
+<body>
+    <script>
+        const options = {
+            method: 'POST',
+            headers: {
+                'xi-api-key': '01d4d96c7408b8fd75aa68f128f474b3',
+                'Content-Type': 'application/json'
+            },
+            body: '{"text":"hey guys!","voice_settings":{"similarity_boost":0.5,"stability":0.5}}'
+        };
+
+        fetch('https://api.elevenlabs.io/v1/text-to-speech/HkGEOnX43srN2Fnciu7O', options)
+        .then(response => response.json())
+        .then(response => console.log(response))
+        .catch(err => console.error(err));
+    </script>
+</body>
+</html>
