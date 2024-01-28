@@ -7,29 +7,93 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AICompanion</title>
   <link href="./Frontend/main.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;900&display=swap" rel="stylesheet">
   <script defer src="./node_modules/axios/dist/axios.min.js"></script>
   <script defer src="./Frontend/main.js"></script>
+  <script defer src="./Frontend/controlPanel.js"></script>
 </head>
 <body>
-  <h1>AI Companion</h1>
-  <h3>Text Input</h3>
-  <input id="textInput" type="text">
-  <button id="sendTextBtn">send</button>
-  <hr>
+  <header>
+    <h3>ai-companion</h3>
+  </header>
+  <main>
+    <section id="outputs">
+      <img id="avator" src="./Frontend/images/namirin.webp" alt="avatar image">
+      <h1>chat with nami</h1>
+      <output>Hello! My name is Nami, how are you?</output>
+      <div id="status"></div>
+      <audio hidden="hidden" controls id="audioPlayer" autoplay="true"></audio>  
+    </section>
+    
 
-  <h3>Audio Input</h3>
-  <button id="start">start</button><br>
-  <button id="cancel">cancel</button><button id="sendAudioBtn">send</button> <br>
-  <hr>
+    <section id="controls">
+      <div id="voiceControls">
+        <div id="beforeVoice">
+          <button id="switchToKeyboard">
+            <svg xmlns="http://www.w3.org/2000/svg" width="29" height="20" viewBox="0 0 34 24" fill="none">
+              <path d="M3.4 0C1.53 0 0 1.54286 0 3.42857V20.5714C0 22.4571 1.53 24 3.4 24H30.6C32.47 24 34 22.4571 34 20.5714V3.42857C34 1.54286 32.47 0 30.6 0H3.4ZM3.4 3.42857H30.6V20.5714H3.4V3.42857ZM5.1 5.14286V8.57143H8.5V5.14286H5.1ZM10.2 5.14286V8.57143H13.6V5.14286H10.2ZM15.3 5.14286V8.57143H18.7V5.14286H15.3ZM20.4 5.14286V8.57143H23.8V5.14286H20.4ZM25.5 5.14286V8.57143H28.9V5.14286H25.5ZM5.1 10.2857V13.7143H8.5V10.2857H5.1ZM10.2 10.2857V13.7143H13.6V10.2857H10.2ZM15.3 10.2857V13.7143H18.7V10.2857H15.3ZM20.4 10.2857V13.7143H23.8V10.2857H20.4ZM25.5 10.2857V13.7143H28.9V10.2857H25.5ZM10.2 15.4286V18.8571H23.8V15.4286H10.2Z" fill="#797979"/>
+            </svg>
+          </button>
+          <button id="start" class="disabled">
+            <svg xmlns="http://www.w3.org/2000/svg" width="58" height="58" viewBox="0 0 60 60" fill="none">
+              <path d="M30 42.5V52.5M30 52.5H22.5M30 52.5H37.5" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M35 12.5C35 9.73858 32.7614 7.5 30 7.5C27.2386 7.5 25 9.73858 25 12.5V27.5C25 30.2614 27.2386 32.5 30 32.5C32.7614 32.5 35 30.2614 35 27.5V12.5Z" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M44.3445 31.8855C43.4185 34.9147 41.557 37.5732 39.0273 39.4795C36.4975 41.386 33.429 42.4425 30.2617 42.4977C27.0945 42.553 23.9912 41.6042 21.3964 39.7872C18.8015 37.9702 16.8485 35.3787 15.8172 32.3835" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div id="placeHolder"></div>
+        </div>
+
+        <div id="duringVoice" class="fadeOut">
+          <button id="cancel">
+            <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 35 35" fill="none">
+              <path d="M31 4L4 30.9914" stroke="white" stroke-width="7" stroke-miterlimit="2.6131" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M31 30.9914L4 4" stroke="white" stroke-width="7" stroke-miterlimit="2.6131" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <button id="sendAudioBtn">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="36" viewBox="0 0 48 36" fill="none">
+              <path d="M4 19.5278L16.3077 31.75L44 4.25" stroke="white" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>        
+      </div>
 
 
-  <br>
-  <output>nothing</output>
-  <br>
+      <div id="textControls" class="fadeOut">
+        <button id="switchToVoice">
+          <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" viewBox="0 0 35 35" fill="none">
+            <path d="M17.5 24.7917V30.625M17.5 30.625H13.125M17.5 30.625H21.875" stroke="#797979" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M20.4167 7.29167C20.4167 5.68084 19.1108 4.375 17.5 4.375C15.8892 4.375 14.5833 5.68084 14.5833 7.29167V16.0417C14.5833 17.6525 15.8892 18.9583 17.5 18.9583C19.1108 18.9583 20.4167 17.6525 20.4167 16.0417V7.29167Z" stroke="#797979" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M25.8676 18.5999C25.3275 20.3669 24.2416 21.9177 22.7659 23.0297C21.2902 24.1418 19.5002 24.7581 17.6527 24.7904C15.8051 24.8226 13.9949 24.2692 12.4812 23.2092C10.9676 22.1493 9.82831 20.6376 9.22672 18.8904" stroke="#797979" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+        <input id="textInput" type="text" placeholder="Hi Nami!">
+        <button id="sendTextBtn" class="disabled">
+          <svg xmlns="http://www.w3.org/2000/svg" width="33" height="33" viewBox="0 0 33 33" fill="none">
+            <path d="M14.1682 18.8248L30.5034 2.49566M14.6325 19.5591L18.3365 26.9673C19.2317 28.7575 19.6792 29.6526 20.243 29.8926C20.7324 30.101 21.2917 30.0631 21.7487 29.7911C22.2752 29.4776 22.5985 28.5305 23.2454 26.6363L30.2439 6.14052C30.8075 4.49011 31.0892 3.66489 30.8964 3.11899C30.7285 2.64409 30.355 2.27052 29.8802 2.10274C29.3342 1.90987 28.509 2.19166 26.8585 2.75521L6.36274 9.75379C4.46859 10.4006 3.52151 10.724 3.20799 11.2505C2.93591 11.7074 2.89821 12.2667 3.10651 12.756C3.34654 13.3198 4.24166 13.7675 6.03189 14.6625L13.44 18.3666C13.735 18.5141 13.8825 18.5878 14.0102 18.6863C14.1237 18.7738 14.2254 18.8755 14.3127 18.9888C14.4114 19.1166 14.485 19.2641 14.6325 19.5591Z" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>  
+      </div>
+    </section>
+    <!-- <button id="restartBtn">restart</button> -->
 
-  <audio controls id="audioPlayer" autoplay="true"></audio>
-
-  <br>
-  <button id="restartBtn">restart</button>
+  </main>
+  <div id="waveBackground">
+    <svg class="waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28" preserveAspectRatio="none" shape-rendering="auto">
+      <defs>
+          <path id="gentle-wave" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z" />
+      </defs>
+      <g class="parallax">
+          <use xlink:href="#gentle-wave" x="48" y="0" fill="rgba(255,255,255,0.5" />
+          <use xlink:href="#gentle-wave" x="48" y="3" fill="rgba(255,255,255,0.3)" />
+          <use xlink:href="#gentle-wave" x="48" y="5" fill="rgba(255,255,255,0.2)" />
+          <!-- <use class="slow" xlink:href="#gentle-wave" x="48" y="7" fill="#fff" /> -->
+      </g>
+  </svg>
+    
+  </div>
 </body>
 </html>

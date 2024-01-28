@@ -7,14 +7,23 @@ let startBtn = document.querySelector('#start');
 let cancelBtn = document.querySelector('#cancel');
 let sendAudioBtn = document.querySelector('#sendAudioBtn');
 
-let restartBtn = document.querySelector('#restartBtn');
+let imgAvatar = document.querySelector('#avator');
+let statusOutput = document.querySelector('#status');
+
+let wave1 = document.querySelector('.parallax>use:nth-child(1)');
+let wave2 = document.querySelector('.parallax>use:nth-child(2)');
+let wave3 = document.querySelector('.parallax>use:nth-child(3)');
+
+//let restartBtn = document.querySelector('#restartBtn');
 
 sendTextBtn.disabled = true;
+startBtn.disabled = true;
 /**
  * Intialized the chat functionality
  */
 const initialization = async () => {
   try{
+    statusOutput.innerText = 'Initalizaing...'
     let initResult = await axios.get('./chatAI'); 
     console.log(initResult);
     console.log(typeof(initResult.data));
@@ -23,12 +32,16 @@ const initialization = async () => {
       alert('initialized still in progress');
     }else{
       alert('chat initialized');
-      sendTextBtn.disabled = false;  
+      sendTextBtn.disabled = false;
+      sendTextBtn.classList.remove('disabled');
+      startBtn.disabled = false;
+      startBtn.classList.remove('disabled');
     }
-    
+    statusOutput.innerText = '';
   }
   catch (err) {
     console.error(err);
+    statusOutput.innerText = '';
   }  
 };
 initialization();
@@ -39,13 +52,17 @@ initialization();
  * Function to send message to the back end
  */
 const sendMessage = async (input) => {
+  //disable text and start voice btn
   sendTextBtn.disabled = true;
+  sendTextBtn.classList.add('disabled');
+  startBtn.disabled = true;
+  startBtn.classList.add('disabled');
   try {
     // User data to be sent in the request body
     const requestContent = {
       message: input
     };
-
+    statusOutput.innerText = 'Nami is thinking...';
     // Send POST request using Axios
     const response = await axios.post('./chatAI', requestContent);
     
@@ -68,7 +85,8 @@ sendTextBtn.addEventListener('click', async () => {
   let AItextResponse = await sendMessage(input.value);
   await textToSpeech(AItextResponse);
   output.innerText = AItextResponse;
-  sendTextBtn.disabled = false;
+  // sendTextBtn.disabled = false;
+  // sendTextBtn.classList.remove('disabled');
 });
 
 
@@ -78,6 +96,7 @@ sendTextBtn.addEventListener('click', async () => {
 let textToSend = "";
 
 sendAudioBtn.disabled = true;
+sendAudioBtn.classList.add('disabled');
 
 const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
 const recognition = new SpeechRecognition();
@@ -87,11 +106,13 @@ startBtn.addEventListener('click', () => {
   recognition.start();
   textToSend = "";
   startBtn.disabled = true;
+  startBtn.classList.add('disabled');
 });
 
 cancelBtn.addEventListener('click', () => {
   recognition.abort();
   startBtn.disabled = false;
+  startBtn.classList.remove('disabled');
   console.log('abort');
   textToSend = "";
 });
@@ -109,12 +130,29 @@ recognition.addEventListener('result', (e) => {
   if (e.results[resultsLength].isFinal) {
     textToSend += saidWord
   }
+  wave1.classList.add('speak');
+  wave2.classList.add('speak');
+  wave3.classList.add('speak');
+  setTimeout(() => {
+    wave1.classList.remove('speak');
+    wave2.classList.remove('speak');
+    wave3.classList.remove('speak');
+  }, 1000);   
   //console.log(saidWord);
 });
 
 recognition.addEventListener("speechstart", () => {
   console.log("Speech has been detected");
   sendAudioBtn.disabled = false;
+  sendAudioBtn.classList.remove('disabled');
+  wave1.classList.add('speak');
+  wave2.classList.add('speak');
+  wave3.classList.add('speak');
+  setTimeout(() => {
+    wave1.classList.remove('speak');
+    wave2.classList.remove('speak');
+    wave3.classList.remove('speak');
+  }, 1000); 
 });
 
 recognition.addEventListener('error', (e) => {
@@ -130,6 +168,9 @@ recognition.addEventListener('error', (e) => {
   }
 });
 
+
+// once the voice recognition is ended, send it to the backend
+// wait for response => text to speech => print inside <output>
 recognition.addEventListener("end", async() => {
   console.log("Speech recognition service disconnected");
   if(textToSend != ''){
@@ -138,11 +179,13 @@ recognition.addEventListener("end", async() => {
     await textToSpeech(AItextResponse);
     output.innerText = AItextResponse;
   }else{
+    //alert('no speech detacted');
     console.log('no speech');
   }
   
   sendAudioBtn.disabled = true;
-  startBtn.disabled = false;
+  sendAudioBtn.classList.add('disabled');
+
 });
 
 // Disable automatic stopping on pause
@@ -151,13 +194,15 @@ recognition.continuous = true;
 
 
 
+
 /**
- * Text to Speech
+ * Text to Speech 11 labs
  * Convert text responde from the server to audio
  */
 const textToSpeech = async(inputText) =>{
   inputText = String(inputText).replace(/[^a-zA-Z0-9.,!?-]/g, ' ');;
   console.log(inputText);
+  statusOutput.innerText = 'Nami is about to say something...';
   const options = {
     method: 'POST',
     headers: {
@@ -180,13 +225,22 @@ const textToSpeech = async(inputText) =>{
     const response = await fetch('https://api.elevenlabs.io/v1/text-to-speech/Wg4WNUR6UjsqZySAT54h', options);
     const buffer = await response.arrayBuffer();
 
-    // Assuming you want to play the audio using an HTML5 Audio element
     const audioBlob = new Blob([buffer], { type: 'audio/wav' });
     const audioUrl = URL.createObjectURL(audioBlob);
 
-    // const audio = new Audio(audioUrl);
+    // play audio
     audioPlayer.src = audioUrl;
     audioPlayer.play();
+
+    // start animation
+    imgAvatar.classList.add('animate');
+
+    // when voice is played, enable send text and start voice btns
+    startBtn.disabled = false;
+    startBtn.classList.remove('disabled');
+    sendTextBtn.disabled = false;
+    sendTextBtn.classList.remove('disabled');
+    statusOutput.innerText = '';
   } catch (err) {
     console.error(err);
   }  
@@ -194,25 +248,29 @@ const textToSpeech = async(inputText) =>{
 // Test
 //textToSpeech('HiRis, Its Irys!  Good morning. I am going to play a game today. Are you guys ready?');
 
+//end Aimation
+audioPlayer.addEventListener("ended", () => {
+  imgAvatar.classList.remove('animate');
+});
 
 /**
  * Restart after Session ends
  */
-restartBtn.addEventListener('click', async () => {
-  try{
-    let initResult = await axios.get('./restartChatAI'); 
-    console.log(initResult);
-    console.log(typeof(initResult.data));
-    console.log(initResult.data == false);
-    if(initResult.data  == false){
-      alert('initialized still in progress');
-    }else{
-      alert('chat initialized');
-      sendTextBtn.disabled = false;  
-    }
+// restartBtn.addEventListener('click', async () => {
+//   try{
+//     let initResult = await axios.get('./restartChatAI'); 
+//     console.log(initResult);
+//     console.log(typeof(initResult.data));
+//     console.log(initResult.data == false);
+//     if(initResult.data  == false){
+//       alert('initialized still in progress');
+//     }else{
+//       alert('chat initialized');
+//       sendTextBtn.disabled = false;  
+//     }
     
-  }
-  catch (err) {
-    console.error(err);
-  }  
-});
+//   }
+//   catch (err) {
+//     console.error(err);
+//   }  
+// });
